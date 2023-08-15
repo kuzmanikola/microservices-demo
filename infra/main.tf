@@ -4,7 +4,6 @@ terraform {
     prefix = "terraform/state"
   }
 }
-
 provider "google" {
   project = var.project_id
   region  = var.region
@@ -52,3 +51,4 @@ resource "google_storage_bucket" "my_bucket" {
   location      = "US" 
   force_destroy = true
 }
+
