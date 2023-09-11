@@ -25,6 +25,7 @@ resource "google_compute_subnetwork" "private_subnet" {
   private_ip_google_access = true
 }
 
+
 resource "google_container_cluster" "my_cluster" {
   name     = "nkuzman"
   location = var.region
@@ -40,3 +41,5 @@ resource "google_container_cluster" "my_cluster" {
     }
   }
 }
+
+
