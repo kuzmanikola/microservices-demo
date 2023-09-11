@@ -24,3 +24,22 @@ resource "google_compute_subnetwork" "private_subnet" {
 
   private_ip_google_access = true
 }
+
+
+resource "google_container_cluster" "my_cluster" {
+  name     = "nkuzman"
+  location = var.region
+  project  = var.project_id
+
+  node_pool {
+    name       = "default-node-pool"
+    initial_node_count = 1
+    node_count = 1
+
+    node_config {
+      machine_type = "n1-standard-2"
+    }
+  }
+}
+
+
