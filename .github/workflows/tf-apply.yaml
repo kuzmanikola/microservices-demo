@@ -33,9 +33,10 @@ jobs:
     - name: Apply Terraform changes
       run: terraform apply -auto-approve
 
-  deploy:
-    runs-on: ubuntu-latest
+  deploy-dev:
     needs: terraform-apply
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
 
     steps:
       - name: Checkout Code
@@ -52,9 +53,61 @@ jobs:
         run: gcloud auth configure-docker
 
       - name: Authenticate Kubectl
-        run: gcloud container clusters get-credentials nkuzman --region us-central1 --project gd-gcp-gridu-devops-t1-t2
+        run: gcloud container clusters get-credentials nkuzman-dev --region us-central1 --project gd-gcp-gridu-devops-t1-t2
 
-      - name: Apply Kubernetes Manifests
+      - name: Apply Kubernetes Manifests (DEV)
+        run: |
+          kubectl apply -f deploy/kubernetes/complete-demo.yaml
+
+  deploy-staging:
+    needs: terraform-apply
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+          project_id: gd-gcp-gridu-devops-t1-t2
+          service_account_key: ${{ secrets.GCLOUD_AUTH_KEY }}
+          export_default_credentials: true
+
+      - name: Configure Docker
+        run: gcloud auth configure-docker
+
+      - name: Authenticate Kubectl
+        run: gcloud container clusters get-credentials nkuzman-staging --region us-central1 --project gd-gcp-gridu-devops-t1-t2
+
+      - name: Apply Kubernetes Manifests (STAGING)
+        run: |
+          kubectl apply -f deploy/kubernetes/complete-demo.yaml
+
+  deploy-production:
+    needs: terraform-apply
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+          project_id: gd-gcp-gridu-devops-t1-t2
+          service_account_key: ${{ secrets.GCLOUD_AUTH_KEY }}
+          export_default_credentials: true
+
+      - name: Configure Docker
+        run: gcloud auth configure-docker
+
+      - name: Authenticate Kubectl
+        run: gcloud container clusters get-credentials nkuzman-prod --region us-central1 --project gd-gcp-gridu-devops-t1-t2
+
+      - name: Apply Kubernetes Manifests (PRODUCTION)
         run: |
           gcloud components install gke-gcloud-auth-plugin
           kubectl apply -f deploy/kubernetes/complete-demo.yaml
