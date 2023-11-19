@@ -35,6 +35,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
+    needs: terraform-apply
 
     steps:
       - name: Checkout Code
@@ -55,4 +56,5 @@ jobs:
 
       - name: Apply Kubernetes Manifests
         run: |
+          gcloud components install gke-gcloud-auth-plugin
           kubectl apply -f deploy/kubernetes/complete-demo.yaml
