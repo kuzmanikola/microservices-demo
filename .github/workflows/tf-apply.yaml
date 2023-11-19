@@ -57,6 +57,7 @@ jobs:
 
       - name: Apply Kubernetes Manifests (DEV)
         run: |
+          gcloud components install gke-gcloud-auth-plugin
           kubectl apply -f deploy/kubernetes/complete-demo.yaml
 
   deploy-staging:
@@ -83,6 +84,7 @@ jobs:
 
       - name: Apply Kubernetes Manifests (STAGING)
         run: |
+          gcloud components install gke-gcloud-auth-plugin
           kubectl apply -f deploy/kubernetes/complete-demo.yaml
 
   deploy-production:
@@ -109,4 +111,5 @@ jobs:
 
       - name: Apply Kubernetes Manifests (PRODUCTION)
         run: |
+          gcloud components install gke-gcloud-auth-plugin
           kubectl apply -f deploy/kubernetes/complete-demo.yaml
